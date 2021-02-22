@@ -1,5 +1,6 @@
 #include "impl.h"
 
+using namespace std::placeholders;
 void DataBrowser::userLeave(const std::string &userId)
 {
     m_dataReaders.erase(userId);
@@ -9,7 +10,7 @@ bool DataBrowser::getDataType1(const std::string &userId, std::vector<size_t> &r
 {
     auto lambda = [this, &returnValues](const std::unique_ptr<IDataSelector>& selector) {
         return invokeDataRequest(std::bind(&IDataSelector::getDataType1,
-                                           std::placeholders::_1, std::placeholders::_2, 0), selector, returnValues);
+                                           _1, _2, 0), selector, returnValues);
     };
 
     return safeCall(userId, lambda);
@@ -19,7 +20,7 @@ bool DataBrowser::getDataType2(std::vector<size_t> &returnValues, const std::str
 {
     auto lambda = [this, &returnValues](const std::unique_ptr<IDataSelector>& selector) {
         return invokeDataRequest(std::bind(&IDataSelector::getDataType2,
-                                           std::placeholders::_1, std::placeholders::_2), selector, returnValues);
+                                           _1, _2), selector, returnValues);
     };
 
     return safeCall(userId, lambda);
@@ -30,7 +31,7 @@ bool DataBrowser::getDataType3(const std::string &userId, std::vector<std::strin
     auto lambda = [this, &returnValues](const std::unique_ptr<IDataSelector>& selector) {
         std::deque<size_t> unprocessedResults {};
         bool success = invokeDataRequest(std::bind(&IDataSelector::getDataType3,
-                                                   std::placeholders::_1, std::placeholders::_2), selector, unprocessedResults);
+                                                   _1, _2), selector, unprocessedResults);
         returnValues = process(unprocessedResults);
         return success;
     };
